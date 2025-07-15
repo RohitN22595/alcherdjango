@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <link rel="stylesheet" href="{% static 'css/home.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    </head>
+    <body>
+        <div class="header">
+            <div class="logocontainer"><a href='{% url 'movies:home' %}'><img src="media//02835bd1011d0e4a361708d386ff8689.jpg"></a></div>
+            <div class='searchdiv'>
+                <div class="searchBox">
+                    <input class="searchBar" type="text">
+                    <button class="searchButton"><img src="media/vecteezy_magnifying-glass-or-search-icon-flat-graphic-on-isolated_-removebg-preview.png"></button>
+                </div>
+                <div class='searchresults'> 
+                    {% for movie in movies %}
+                        <div class='resultcontainer' >
+                            {% if user.is_authenticated %}
+                                <a href='{% url 'movies:details' %}' class='resultname'>{{ movie.title }}</a>
+                            {% else %}
+                                <a href='{% url 'users:login' %}' class='resultname'>{{ movie.title }}</a>
+                            {% endif %}    
+                        </div>
+                    {% endfor %}  
+                </div>
+            </div>
+            <div class="typeBox">
+                <a href='{% url 'movies:home' %}'><div class="homeBox"><i class="fa-solid fa-house"></i>Home</div></a>
+                <div class="tvBox"><i class="fa-solid fa-tv"></i>Live TV</div>
+                <div class="demandBox"><i class="fa-solid fa-display"></i>On Demand</div>
+                {% if user.is_authenticated %}
+                    <a href='{% url 'movies:discover' %}'><div class="discoverBox"><i class="fa-solid fa-compass"></i>Discover</div></a>
+                {% else %}
+                    <a href='{% url 'users:login' %}'><div class="discoverBox"><i class="fa-solid fa-compass"></i>Discover</div></a>
+                {% endif %}
+            </div>
+            <div class="other">
+                <div class="screenShare"><i class="fa-solid fa-play"></i></div>
+                <div class="saveLater"><i class="fa-solid fa-bookmark"></i></div>
+                {% if user.is_authenticated %}
+                    <button id="openPopup" class="open-btn">{{ user.username|slice:":1"|upper }}</button>
+                {% else %}
+                    <a href='{% url 'users:login' %}'><button class="signIn">Sign In</button></a>
+                {% endif %}
+            </div>
+        </div>
+        <div id="popupOverlay" class="popup-overlay">
+            <div class="popup-content">
+                <p class='username'> {{ user.username }}</p>
+                <a href = '{% url 'users:passwordchange' %}'>change password</a>
+                <form class='logout' action='{% url 'users:logout' %}' method = 'post'>
+                    {% csrf_token %}
+                    <button class='logout-button'>logout</button>
+                </form>
+            </div>
+        </div>
+        <div class="trilerWrap">
+            <div class="triler">
+                <div class="trilerInfo">
+                    <h1>Wanna watch free <br> movies & TV?</h1>
+                    <p>You've come to the right place. We've got a bunch here at <br> Plex and you can start watching right now.</p>  
+                    {% if user.is_authenticated %}
+
+                    {% else %}
+                        <a href='{% url 'users:register' %}'><button>Sign Up</button></a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="container">
+                {% if user.is_authenticated %}
+                    <a href='{% url 'movies:discover' %}'><div class="titletype"><h2>Suggested</h2><i class="fa-solid fa-arrow-right"></i></div></a>
+                {% else %}
+                    <a href='{% url 'users:login' %}'><div class="titletype"><h2>Suggested</h2><i class="fa-solid fa-arrow-right"></i></div></a>
+                {% endif %}
+                <div class="arrow left"><i class="fa-solid fa-arrow-left"></i></div> <!-- ◀ -->
+                <div class="arrow right"><i class="fa-solid fa-arrow-right"></i></div> <!-- ▶ -->
+                <div class="row">
+                    {% for movie in movies %}
+                        <div class="movieDetails">
+                            {% if user.is_authenticated %}
+                                <a class='page2' href='{% url 'movies:details' %}' data-index="{{ forloop.counter0 }}">
+                            {% else %}
+                                <a href='{% url 'users:login' %}'>
+                            {% endif %}
+                                    <div class="imageContainer">
+                                        <img src="{{ movie.poster.url }}" alt="{{ movie.title }}">
+                                    </div>
+                                </a>
+                            <div class="detailContainer">
+                                <p class="movieTitle">{{ movie.title }}</p>
+                                <p class="releaseYear">{{ movie.release_date }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+        </div> 
+        <script>
+            const detailsUrl = "{% url 'movies:details' %}";
+        </script>
+        <script src="{% static 'js/home.js' %}"></script>
+        {% if messages %}
+            {% for message in messages %}
+                <script>
+                    alert("{{ message }}");
+                </script>
+            {% endfor %}
+        {% endif %}
+    </body>
+</html>

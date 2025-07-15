@@ -1,0 +1,9 @@
+.grid{
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 6 equal columns */
+    gap: 16px; /* space between items */
+    margin-top: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+}
