@@ -125,10 +125,13 @@ STATIC_URL = 'static/'
 
 STATIC_URL = '/static/'
 
-# Optional (for dev use only)
-STATICFILES_DIRS = [
-    BASE_DIR / "static",  # if your static folder is in root
-]
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+# This line allows Django to serve static files using WhiteNoise
+MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
+
+# Optional (for dev use only)
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # Optional
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
